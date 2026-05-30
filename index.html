@@ -52,22 +52,34 @@
       <div class="container">
         <div class="path-steps">
           <div class="path-step reveal">
-            <div class="path-step-num">Bước 1</div>
+            <div class="path-step-head">
+              <span class="path-step-num">Bước 1</span>
+              <span class="path-step-icon" aria-hidden="true">📚</span>
+            </div>
             <h3>Chọn bài</h3>
             <p>Lọc theo Đại số, Hình học, Giải tích</p>
           </div>
           <div class="path-step reveal reveal-delay-1">
-            <div class="path-step-num">Bước 2</div>
+            <div class="path-step-head">
+              <span class="path-step-num">Bước 2</span>
+              <span class="path-step-icon" aria-hidden="true">▶</span>
+            </div>
             <h3>Xem & ghi chú</h3>
             <p>Video + tài liệu, viết chú thích riêng</p>
           </div>
           <div class="path-step reveal reveal-delay-2">
-            <div class="path-step-num">Bước 3</div>
+            <div class="path-step-head">
+              <span class="path-step-num">Bước 3</span>
+              <span class="path-step-icon" aria-hidden="true">✓</span>
+            </div>
             <h3>Ôn nhanh</h3>
             <p>3–5 câu cuối mỗi bài để nhớ lâu</p>
           </div>
           <div class="path-step reveal reveal-delay-3">
-            <div class="path-step-num">Bước 4</div>
+            <div class="path-step-head">
+              <span class="path-step-num">Bước 4</span>
+              <span class="path-step-icon" aria-hidden="true">⏱</span>
+            </div>
             <h3>Thi thử</h3>
             <p>Đồng hồ, phiếu trả lời, chấm ngay</p>
           </div>
@@ -78,31 +90,33 @@
     <section class="section features-section">
       <div class="container">
         <div class="section-head center reveal-scale">
-          <span class="section-num">01 — Tính năng</span>
           <h2>Trang bị đầy đủ cho <em>một buổi học</em></h2>
           <p>Không cần nhiều app — mọi công cụ học toán nằm gọn trên một trang.</p>
         </div>
-        <div class="feature-list">
-          <article class="feature-item reveal">
-            <span class="feature-num">01</span>
-            <div>
-              <h3><span class="feature-icon" aria-hidden="true">▶</span> Video bài giảng</h3>
-              <p>Giảng viên đi thẳng vào bài — xem, tua lại, ôn đi ôn lại cho đến khi hiểu.</p>
+        <div class="feature-grid">
+          <article class="feature-card reveal">
+            <div class="feature-card-head">
+              <span class="feature-card-num">01</span>
+              <div class="feature-card-icon" aria-hidden="true">▶</div>
             </div>
+            <h3>Video bài giảng</h3>
+            <p>Giảng viên đi thẳng vào bài — xem, tua lại, ôn đi ôn lại cho đến khi hiểu.</p>
           </article>
-          <article class="feature-item reveal reveal-delay-1">
-            <span class="feature-num">02</span>
-            <div>
-              <h3><span class="feature-icon" aria-hidden="true">✎</span> Ghi chú trên vở</h3>
-              <p>Viết chú thích ngay dưới bài học. Trình duyệt nhớ giúp bạn, không cần tài khoản.</p>
+          <article class="feature-card reveal reveal-delay-1">
+            <div class="feature-card-head">
+              <span class="feature-card-num">02</span>
+              <div class="feature-card-icon" aria-hidden="true">✎</div>
             </div>
+            <h3>Ghi chú trên vở</h3>
+            <p>Viết chú thích ngay dưới bài học. Trình duyệt nhớ giúp bạn, không cần tài khoản.</p>
           </article>
-          <article class="feature-item reveal reveal-delay-2">
-            <span class="feature-num">03</span>
-            <div>
-              <h3><span class="feature-icon" aria-hidden="true">⏱</span> Thi thử có đồng hồ</h3>
-              <p>Đề thi, thời gian, tiến độ từng câu — giống phòng thi thật, kết quả chi tiết ngay sau khi nộp.</p>
+          <article class="feature-card reveal reveal-delay-2">
+            <div class="feature-card-head">
+              <span class="feature-card-num">03</span>
+              <div class="feature-card-icon" aria-hidden="true">⏱</div>
             </div>
+            <h3>Thi thử có đồng hồ</h3>
+            <p>Đề thi, thời gian, tiến độ từng câu — giống phòng thi thật, kết quả chi tiết ngay sau khi nộp.</p>
           </article>
         </div>
       </div>
@@ -129,15 +143,14 @@
       </div>
     </section>
 
-    <section class="section">
+    <section class="section featured-lessons-section">
       <div class="container">
         <div class="section-head center reveal-scale">
-          <span class="section-num">02 — Bài học</span>
           <h2>Bắt đầu từ <em>ba bài đầu tiên</em></h2>
           <p>Đại số, hình học, giải tích — chọn chủ đề phù hợp rồi đi sâu từng bài.</p>
         </div>
-        <div class="grid-3" id="featuredLessons"></div>
-        <div class="cta-center">
+        <div class="featured-lessons-grid" id="featuredLessons"></div>
+        <div class="featured-lessons-cta reveal">
           <a href="pages/lessons.html" class="btn btn-outline btn-lg">Xem toàn bộ bài học</a>
         </div>
       </div>
@@ -155,25 +168,7 @@
       if (!container) return;
 
       container.innerHTML = LESSONS.slice(0, 3).map(function (lesson, i) {
-        var num = String(lesson.id).padStart(2, '0');
-        return (
-          '<a href="pages/lesson-detail.html?id=' + lesson.id + '" class="card lesson-card reveal reveal-delay-' + (i + 1) + '" style="text-decoration:none;color:inherit;">' +
-            '<span class="card-stamp">Bài ' + num + '</span>' +
-            '<div class="card-img topic-' + lesson.topic + '">' +
-              lesson.icon +
-              '<span class="topic-tag">' + lesson.topicLabel + '</span>' +
-            '</div>' +
-            '<div class="card-body">' +
-              '<div class="card-meta" style="margin-bottom:var(--spacing-sm)">' +
-                '<span class="badge badge-primary">' + lesson.grade + '</span>' +
-              '</div>' +
-              '<h3 class="card-title">' + lesson.title + '</h3>' +
-              '<p class="card-text">' + lesson.description + '</p>' +
-              '<span class="badge badge-secondary">' + lesson.duration + '</span>' +
-              '<span class="card-link-arrow">Đọc bài →</span>' +
-            '</div>' +
-          '</a>'
-        );
+        return window.MathUpUI.renderLessonCard(lesson, { index: i, hrefPrefix: 'pages/lesson-detail.html?id=' });
       }).join('');
 
       if (window.MathUpUI) window.MathUpUI.refreshReveal();

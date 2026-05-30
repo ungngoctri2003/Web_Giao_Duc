@@ -22,13 +22,14 @@ body {
   color: var(--color-text);
   background-color: var(--color-canvas);
   background-image:
-    linear-gradient(rgba(var(--rgb-ink), 0.025) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(var(--rgb-ink), 0.025) 1px, transparent 1px);
-  background-size: 40px 40px;
+    linear-gradient(rgba(var(--rgb-ink), 0.018) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(var(--rgb-ink), 0.018) 1px, transparent 1px);
+  background-size: 48px 48px;
   min-height: 100vh;
   display: flex;
   flex-direction: column;
   -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 main {
@@ -129,45 +130,115 @@ strong, b {
   margin: 0.75rem auto 0;
 }
 
-.section-num {
-  display: block;
+/* ── Type system — đồng bộ font toàn site ── */
+
+/* Nhãn / kicker / badge nhỏ */
+.section-num,
+.hero-kicker,
+.feature-card-num,
+.path-step-num,
+.lesson-card-topic,
+.lesson-card-num,
+.lesson-card-time,
+.exam-count,
+.lesson-count,
+.hero-tags li,
+.badge,
+.stat-label {
   font-family: var(--font-mono);
-  font-size: var(--font-size-xs);
-  font-weight: 600;
-  color: var(--color-primary);
-  letter-spacing: var(--letter-spacing-wider);
+  font-size: var(--type-label-size);
+  font-weight: var(--type-label-weight);
+  letter-spacing: var(--type-label-tracking);
   text-transform: uppercase;
-  margin-bottom: var(--spacing-sm);
+}
+
+.section-num,
+.hero-kicker {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  color: var(--color-primary-dark);
+  margin-bottom: var(--spacing-md);
+  padding: 0.35rem 0.85rem;
+  background: rgba(255, 255, 255, 0.75);
+  border: 1px solid rgba(var(--rgb-primary), 0.14);
+  border-radius: var(--radius-full);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  box-shadow: var(--shadow-sm);
+}
+
+.hero-kicker {
+  margin-bottom: var(--spacing-lg);
+}
+
+/* Mô tả section / hero */
+.section-head p,
+.hero-lead,
+.page-header p {
+  font-family: var(--font-body);
+  font-size: var(--type-lead-size);
+  font-weight: var(--font-weight-body);
+  line-height: var(--type-lead-height);
+  letter-spacing: var(--letter-spacing-normal);
+  color: var(--color-text-muted);
+}
+
+/* Tiêu đề card */
+.feature-card h3,
+.path-step h3,
+.lesson-card .card-title,
+.card-title,
+.exam-card .card-title {
+  font-family: var(--font-display);
+  font-size: var(--type-card-title-size);
+  font-weight: var(--type-card-title-weight);
+  letter-spacing: var(--letter-spacing-snug);
+  line-height: var(--line-height-snug);
+  color: var(--color-text);
+}
+
+/* Nội dung card */
+.feature-card p,
+.path-step p,
+.lesson-card .card-text,
+.card-text {
+  font-family: var(--font-body);
+  font-size: var(--type-card-body-size);
+  font-weight: var(--font-weight-body);
+  line-height: var(--type-card-body-height);
+  letter-spacing: var(--letter-spacing-normal);
+  color: var(--color-text-muted);
 }
 
 .section-head h2 em {
   font-style: italic;
   color: var(--color-primary);
   font-weight: var(--font-weight-display-em);
+  position: relative;
+  display: inline-block;
+  padding-bottom: 0.15em;
 }
 
 .section-head h2 {
   position: relative;
   display: inline-block;
-  padding-bottom: var(--spacing-sm);
 }
 
-.section-head h2::after {
+.section-head h2 em::after {
   content: '';
   position: absolute;
   left: 0;
   bottom: 0;
   width: 100%;
-  height: 4px;
-  background: linear-gradient(90deg, var(--color-primary), var(--color-secondary), var(--color-accent));
+  height: 3px;
+  background: linear-gradient(90deg, var(--color-primary), var(--color-secondary));
   border-radius: var(--radius-full);
-  opacity: 0.9;
+  opacity: 0.55;
 }
 
-.section-head.center h2::after {
-  left: 50%;
-  transform: translateX(-50%);
-  width: 72px;
+.section-head h2::after {
+  display: none;
 }
 
 .text-mono {

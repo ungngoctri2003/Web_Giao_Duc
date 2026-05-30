@@ -12,10 +12,17 @@
     return m + ' phút ' + s + ' giây';
   }
 
+  function getGradeMessage(label) {
+    if (label === 'Giỏi') return 'Xuất sắc! Bạn nắm vững kiến thức.';
+    if (label === 'Khá') return 'Làm tốt! Ôn thêm một chút nữa nhé.';
+    if (label === 'Trung bình') return 'Ổn rồi — xem lại các câu sai để tiến bộ.';
+    return 'Đừng nản — thi lại và ôn kỹ hơn nhé.';
+  }
+
   function renderResultDetails(details) {
     return details.map(function (item, index) {
       var statusClass = item.isCorrect ? 'correct' : 'incorrect';
-      var statusIcon = item.isCorrect ? '✓' : '✗';
+      var statusLabel = item.isCorrect ? 'Đúng' : 'Sai';
 
       var userAnswerText = item.userAnswer !== undefined
         ? item.options[item.userAnswer]
@@ -23,17 +30,28 @@
 
       var correctAnswerText = item.options[item.correctAnswer];
 
+      var correctRow = !item.isCorrect
+        ? '<div class="result-answer-row is-correct">' +
+            '<span class="result-answer-label">Đáp án đúng</span>' +
+            '<span class="result-answer-value">' + correctAnswerText + '</span>' +
+          '</div>'
+        : '';
+
       return (
-        '<div class="result-item ' + statusClass + ' reveal">' +
-          '<div class="result-item-number">' + statusIcon + '</div>' +
-          '<div class="result-item-content">' +
-            '<p><span class="answer-label">Câu ' + (index + 1) + ':</span> ' + item.question + '</p>' +
-            '<p><span class="answer-label">Bạn chọn:</span> ' + userAnswerText + '</p>' +
-            (!item.isCorrect
-              ? '<p><span class="answer-label">Đáp án đúng:</span> ' + correctAnswerText + '</p>'
-              : '') +
+        '<article class="result-card ' + statusClass + ' reveal">' +
+          '<div class="result-card-head">' +
+            '<span class="result-card-num">Câu ' + (index + 1) + '</span>' +
+            '<span class="result-card-badge ' + statusClass + '">' + statusLabel + '</span>' +
           '</div>' +
-        '</div>'
+          '<p class="result-card-question">' + item.question + '</p>' +
+          '<div class="result-card-answers">' +
+            '<div class="result-answer-row is-user">' +
+              '<span class="result-answer-label">Bạn chọn</span>' +
+              '<span class="result-answer-value">' + userAnswerText + '</span>' +
+            '</div>' +
+            correctRow +
+          '</div>' +
+        '</article>'
       );
     }).join('');
   }
@@ -67,54 +85,89 @@
 
     document.title = 'Kết quả: ' + result.examTitle + ' - MathUp VN';
 
+    var wrongCount = result.total - result.correct;
     var autoAlert = isAuto
-      ? '<div class="alert alert-info" style="margin-bottom: var(--spacing-xl);">⏱ Hết thời gian! Bài thi đã được nộp tự động.</div>'
+      ? '<div class="result-auto-alert reveal">' +
+          '<span class="result-auto-alert-icon" aria-hidden="true">⏱</span>' +
+          '<div>' +
+            '<strong>Hết thời gian</strong>' +
+            '<p>Bài thi đã được nộp tự động.</p>' +
+          '</div>' +
+        '</div>'
       : '';
 
     if (container) {
       container.innerHTML =
         autoAlert +
-        '<div class="report-band">' +
-          'Bạn đạt <strong>' + result.correct + '/' + result.total + '</strong> câu · xếp loại <strong>' + result.grade.label + '</strong>' +
-        '</div>' +
 
-        '<div class="result-header">' +
-          '<span class="section-num">Kết quả</span>' +
-          '<h1>Xong bài — <em>' + result.grade.label + '</em></h1>' +
-          '<p>' + result.examTitle + '</p>' +
-        '</div>' +
-
-        '<div class="grade-stamp-wrap"><div class="grade-stamp">' + result.grade.label + '</div></div>' +
-
-        '<div class="score-circle ' + result.grade.class + '">' +
-          '<div class="score-value">' + result.percent + '%</div>' +
-          '<div class="score-label">' + result.grade.label + '</div>' +
-        '</div>' +
-
-        '<div class="result-meta">' +
-          '<div class="result-meta-item">' +
-            '<div class="value">' + result.correct + '/' + result.total + '</div>' +
-            '<div class="label">Câu đúng</div>' +
-          '</div>' +
-          '<div class="result-meta-item">' +
-            '<div class="value">' + result.percent + '%</div>' +
-            '<div class="label">Tỷ lệ đúng</div>' +
-          '</div>' +
-          '<div class="result-meta-item">' +
-            '<div class="value">' + formatTimeSpent(result.timeSpent) + '</div>' +
-            '<div class="label">Thời gian làm bài</div>' +
+        '<div class="result-hero reveal-scale">' +
+          '<div class="result-hero-inner">' +
+            '<div class="result-score-ring-wrap">' +
+              '<div class="result-score-ring ' + result.grade.class + ' is-animated" style="--score-percent: ' + result.percent + '">' +
+                '<div class="result-score-center">' +
+                  '<span class="result-score-value">' + result.percent + '%</span>' +
+                  '<span class="result-score-label">' + result.grade.label + '</span>' +
+                '</div>' +
+              '</div>' +
+            '</div>' +
+            '<div class="result-hero-content">' +
+              '<span class="section-num">Kết quả bài thi</span>' +
+              '<h1>Hoàn thành — <em>' + result.grade.label + '</em></h1>' +
+              '<p class="result-exam-title">' + result.examTitle + '</p>' +
+              '<p class="result-hero-message">' + getGradeMessage(result.grade.label) + '</p>' +
+              '<div class="result-summary-chips">' +
+                '<span class="result-chip">' +
+                  '<span aria-hidden="true">✓</span> ' + result.correct + '/' + result.total + ' câu đúng' +
+                '</span>' +
+                '<span class="result-chip">' +
+                  '<span aria-hidden="true">⏱</span> ' + formatTimeSpent(result.timeSpent) +
+                '</span>' +
+              '</div>' +
+            '</div>' +
           '</div>' +
         '</div>' +
 
-        '<div class="result-actions">' +
-          '<a href="exam.html?id=' + (examId || result.examId) + '" class="btn btn-outline btn-lg">Làm lại</a>' +
-          '<a href="exams.html" class="btn btn-primary btn-lg">Về danh sách bài thi</a>' +
+        '<div class="result-stats reveal">' +
+          '<div class="result-stat">' +
+            '<span class="result-stat-icon correct" aria-hidden="true">✓</span>' +
+            '<div class="result-stat-body">' +
+              '<span class="result-stat-value">' + result.correct + '</span>' +
+              '<span class="result-stat-label">Câu đúng</span>' +
+            '</div>' +
+          '</div>' +
+          '<div class="result-stat">' +
+            '<span class="result-stat-icon incorrect" aria-hidden="true">✗</span>' +
+            '<div class="result-stat-body">' +
+              '<span class="result-stat-value">' + wrongCount + '</span>' +
+              '<span class="result-stat-label">Câu sai</span>' +
+            '</div>' +
+          '</div>' +
+          '<div class="result-stat">' +
+            '<span class="result-stat-icon time" aria-hidden="true">⏱</span>' +
+            '<div class="result-stat-body">' +
+              '<span class="result-stat-value result-stat-value-sm">' + formatTimeSpent(result.timeSpent) + '</span>' +
+              '<span class="result-stat-label">Thời gian</span>' +
+            '</div>' +
+          '</div>' +
         '</div>' +
 
-        '<div class="content-section result-breakdown">' +
-          '<h2>Chi tiết từng câu <span class="section-tag">' + result.total + ' câu</span></h2>' +
-          renderResultDetails(result.details) +
-        '</div>';
+        '<div class="result-actions reveal">' +
+          '<a href="exam.html?id=' + (examId || result.examId) + '" class="btn btn-outline btn-lg">Thi lại</a>' +
+          '<a href="exams.html" class="btn btn-primary btn-lg">Về danh sách đề</a>' +
+        '</div>' +
+
+        '<section class="result-breakdown reveal">' +
+          '<div class="result-breakdown-head">' +
+            '<div>' +
+              '<h2>Chi tiết từng câu</h2>' +
+              '<p class="result-breakdown-sub">' + result.correct + ' đúng · ' + wrongCount + ' sai · ' + result.total + ' câu</p>' +
+            '</div>' +
+            '<span class="result-breakdown-tag">' + result.total + ' câu</span>' +
+          '</div>' +
+          '<div class="result-list">' +
+            renderResultDetails(result.details) +
+          '</div>' +
+        '</section>';
     }
 
     if (window.MathUpUI) {

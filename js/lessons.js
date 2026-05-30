@@ -50,29 +50,11 @@
     if (empty) empty.style.display = 'none';
 
     grid.innerHTML = filtered.map(function (lesson, i) {
-      var num = String(lesson.id).padStart(2, '0');
-      var delay = (i % 3) + 1;
-      return (
-        '<a href="lesson-detail.html?id=' + lesson.id + '" class="card lesson-card reveal reveal-delay-' + delay + '" style="text-decoration:none;color:inherit;">' +
-          '<span class="card-stamp">Bài ' + num + '</span>' +
-          '<div class="card-img topic-' + lesson.topic + '">' +
-            lesson.icon +
-            '<span class="topic-tag">' + lesson.topicLabel + '</span>' +
-          '</div>' +
-          '<div class="card-body">' +
-            '<div class="card-meta" style="margin-bottom: var(--spacing-sm);">' +
-              '<span class="badge badge-primary">' + lesson.grade + '</span>' +
-            '</div>' +
-            '<h3 class="card-title">' + lesson.title + '</h3>' +
-            '<p class="card-text">' + lesson.description + '</p>' +
-            '<div class="card-meta">' +
-              '<span class="badge badge-secondary">' + lesson.duration + '</span>' +
-              '<span class="badge badge-accent">' + lesson.quiz.length + ' câu ôn</span>' +
-            '</div>' +
-            '<span class="card-link-arrow">Đọc bài →</span>' +
-          '</div>' +
-        '</a>'
-      );
+      return window.MathUpUI.renderLessonCard(lesson, {
+        index: i,
+        hrefPrefix: 'lesson-detail.html?id=',
+        showQuiz: true
+      });
     }).join('');
 
     if (window.MathUpUI) window.MathUpUI.refreshReveal();

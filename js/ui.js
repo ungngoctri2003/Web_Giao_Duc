@@ -153,10 +153,8 @@
   }
 
   function initResultAnimations() {
-    var score = document.querySelector('.score-circle');
-    var report = document.querySelector('.report-band');
+    var score = document.querySelector('.result-score-ring, .score-circle');
     if (score) score.classList.add('is-animated');
-    if (report) report.classList.add('is-animated');
   }
 
   function animateExamQuestion(card) {
@@ -170,6 +168,43 @@
     initScrollReveal();
   }
 
+  function renderLessonCard(lesson, options) {
+    options = options || {};
+    var num = String(lesson.id).padStart(2, '0');
+    var index = options.index != null ? options.index : 0;
+    var delay = options.delay != null ? options.delay : (index % 3) + 1;
+    var href = (options.hrefPrefix || 'pages/lesson-detail.html?id=') + lesson.id;
+    var revealClass = options.reveal === false ? '' : ' reveal reveal-delay-' + delay;
+    var extraMeta = options.showQuiz
+      ? '<span class="lesson-card-time">' + lesson.quiz.length + ' câu ôn</span>'
+      : '';
+
+    return (
+      '<a href="' + href + '" class="card lesson-card' + revealClass + '">' +
+        '<div class="lesson-card-cover topic-' + lesson.topic + '">' +
+          '<div class="lesson-card-cover-top">' +
+            '<span class="lesson-card-topic">' + lesson.topicLabel + '</span>' +
+            '<span class="lesson-card-num">Bài ' + num + '</span>' +
+          '</div>' +
+          '<div class="lesson-card-icon" aria-hidden="true">' + lesson.icon + '</div>' +
+        '</div>' +
+        '<div class="card-body">' +
+          '<div class="lesson-card-badges">' +
+            '<span class="badge badge-gray">' + lesson.grade + '</span>' +
+            '<span class="lesson-card-time">' + lesson.duration + '</span>' +
+            extraMeta +
+          '</div>' +
+          '<h3 class="card-title">' + lesson.title + '</h3>' +
+          '<p class="card-text">' + lesson.description + '</p>' +
+          '<div class="lesson-card-action">' +
+            '<span>Đọc bài</span>' +
+            '<span class="lesson-card-action-arrow" aria-hidden="true">→</span>' +
+          '</div>' +
+        '</div>' +
+      '</a>'
+    );
+  }
+
   document.addEventListener('DOMContentLoaded', function () {
     initScrollReveal();
     initLessonSidebar();
@@ -180,6 +215,7 @@
 
   window.MathUpUI = {
     refreshReveal: refreshReveal,
+    renderLessonCard: renderLessonCard,
     initLessonSidebar: initLessonSidebar,
     animateExamQuestion: animateExamQuestion,
     initResultAnimations: initResultAnimations

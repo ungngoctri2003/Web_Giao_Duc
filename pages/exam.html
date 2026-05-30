@@ -15,43 +15,63 @@
   <link rel="stylesheet" href="../css/polish.css">
   <link rel="stylesheet" href="../css/animations.css">
 </head>
-<body>
+<body class="exam-page">
   <div id="site-header"></div>
 
   <div class="exam-bar" id="examBar" style="display: none;">
     <div class="container exam-bar-inner">
-      <span class="exam-bar-label">Phòng thi</span>
-      <div class="timer" id="examTimer">
-        <span>⏱</span>
-        <span id="timerDisplay">00:00</span>
-      </div>
-      <div class="progress-wrapper">
-        <div class="progress-label">
-          <span id="progressText">Câu 1/10</span>
-          <span id="progressPercent">0%</span>
-        </div>
-        <div class="progress-bar">
-          <div class="progress-fill" id="progressFill" style="width: 0%;"></div>
+      <div class="exam-bar-start">
+        <a href="exams.html" class="exam-bar-back" aria-label="Quay lại danh sách đề thi">
+          <span class="exam-bar-back-icon" aria-hidden="true">←</span>
+          <span class="exam-bar-back-text">Thoát</span>
+        </a>
+        <div class="exam-bar-divider" aria-hidden="true"></div>
+        <div class="exam-bar-title-wrap">
+          <span class="exam-bar-label">Phòng thi</span>
+          <span class="exam-bar-title" id="examBarTitle"></span>
         </div>
       </div>
-      <button class="btn btn-danger btn-sm" id="submitExamBtn">Nộp bài</button>
+
+      <div class="exam-bar-center">
+        <div class="progress-wrapper">
+          <div class="progress-label">
+            <span id="progressText">Câu 1/10</span>
+            <span id="progressPercent">0%</span>
+          </div>
+          <div class="progress-bar">
+            <div class="progress-fill" id="progressFill" style="width: 0%;"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="exam-bar-end">
+        <div class="timer" id="examTimer">
+          <span class="timer-icon" aria-hidden="true">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8.5" r="6" stroke="currentColor" stroke-width="1.5"/><path d="M8 5v4l2.5 1.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+          </span>
+          <span id="timerDisplay">00:00</span>
+        </div>
+        <button class="btn btn-danger btn-sm exam-submit-btn" id="submitExamBtn">
+          <span aria-hidden="true">✓</span> Nộp bài
+        </button>
+      </div>
     </div>
   </div>
 
-  <main class="main-padded">
+  <main class="exam-main">
     <div class="container" id="examContainer"></div>
   </main>
 
   <div id="site-footer"></div>
 
-  <!-- Submit modal -->
   <div class="modal-overlay" id="submitModal">
-    <div class="modal">
+    <div class="modal exam-modal">
+      <div class="exam-modal-icon" aria-hidden="true">📋</div>
       <h3>Xác nhận nộp bài</h3>
       <p id="submitModalText">Bạn chắc chắn muốn nộp bài thi? Hành động này không thể hoàn tác.</p>
       <div class="modal-actions">
-        <button class="btn btn-ghost" id="cancelSubmitBtn">Hủy</button>
-        <button class="btn btn-primary" id="confirmSubmitBtn">Nộp bài</button>
+        <button class="btn btn-ghost" id="cancelSubmitBtn">Tiếp tục làm</button>
+        <button class="btn btn-primary" id="confirmSubmitBtn">Nộp bài ngay</button>
       </div>
     </div>
   </div>

@@ -7,6 +7,7 @@
   var timerInterval = null;
   var timeRemaining = 0;
   var startTime = null;
+  var shellReady = false;
 
   function getQueryParam(name) {
     return new URLSearchParams(window.location.search).get(name);
@@ -39,6 +40,28 @@
     if (progressText) progressText.textContent = 'Câu ' + current + '/' + total;
     if (progressPercent) progressPercent.textContent = percent + '%';
     if (progressFill) progressFill.style.width = percent + '%';
+
+    updateSidebarStats(answered, total);
+  }
+
+  function updateSidebarStats(answered, total) {
+    var statsEl = document.getElementById('examSidebarStats');
+    if (!statsEl) return;
+
+    var unanswered = total - answered;
+    statsEl.innerHTML =
+      '<div class="exam-stat">' +
+        '<span class="exam-stat-value">' + answered + '</span>' +
+        '<span class="exam-stat-label">Đã trả lời</span>' +
+      '</div>' +
+      '<div class="exam-stat">' +
+        '<span class="exam-stat-value">' + unanswered + '</span>' +
+        '<span class="exam-stat-label">Chưa làm</span>' +
+      '</div>' +
+      '<div class="exam-stat">' +
+        '<span class="exam-stat-value">' + total + '</span>' +
+        '<span class="exam-stat-label">Tổng câu</span>' +
+      '</div>';
   }
 
   function updateTimerDisplay() {
@@ -78,16 +101,21 @@
       var classes = 'question-dot';
       if (index === currentQuestion) classes += ' active';
       if (answers[index] !== undefined) classes += ' answered';
-      return '<button class="' + classes + '" data-index="' + index + '">' + (index + 1) + '</button>';
+      return '<button type="button" class="' + classes + '" data-index="' + index + '" aria-label="Câu ' + (index + 1) + '">' + (index + 1) + '</button>';
     }).join('');
   }
 
-  function renderQuestion() {
-    var q = exam.questions[currentQuestion];
-    var container = document.getElementById('examContainer');
-    if (!container) return;
+  function bindQuestionDotEvents() {
+    document.querySelectorAll('.question-dot').forEach(function (dot) {
+      dot.addEventListener('click', function () {
+        currentQuestion = parseInt(dot.dataset.index, 10);
+        renderQuestion();
+      });
+    });
+  }
 
-    var optionsHtml = q.options.map(function (opt, index) {
+  function renderOptionsHtml(q) {
+    return q.options.map(function (opt, index) {
       var letter = String.fromCharCode(65 + index);
       var selectedClass = answers[currentQuestion] === index ? ' selected' : '';
       return (
@@ -96,45 +124,113 @@
             (answers[currentQuestion] === index ? ' checked' : '') + '>' +
           '<span class="option-letter">' + letter + '</span>' +
           '<span class="option-text">' + opt + '</span>' +
+          '<span class="option-check" aria-hidden="true">✓</span>' +
         '</label>'
       );
     }).join('');
+  }
+
+  function initExamShell() {
+    var container = document.getElementById('examContainer');
+    if (!container) return;
 
     container.innerHTML =
-      '<div class="page-header">' +
-        '<span class="section-num">Đang thi</span>' +
-        '<h1>' + exam.title + '</h1>' +
-        '<p>' + exam.description + '</p>' +
-      '</div>' +
-
-      '<div class="exam-question-card">' +
-        '<h3>Câu ' + (currentQuestion + 1) + ' · ' + q.question + '</h3>' +
-        '<div class="answer-sheet">' +
-          '<div class="answer-sheet-head">' +
-            '<span>Phiếu trả lời</span>' +
-            '<span>Câu ' + (currentQuestion + 1) + '/' + exam.questions.length + '</span>' +
+      '<div class="exam-session-header reveal-scale">' +
+        '<div class="exam-session-header-inner">' +
+          '<div class="exam-session-meta">' +
+            '<span class="badge badge-primary">' + exam.grade + '</span>' +
+            '<span class="badge ' + getDifficultyBadgeClass(exam.difficulty) + '">' + exam.difficulty + '</span>' +
+            '<span class="exam-session-chip">' +
+              '<span aria-hidden="true">⏱</span> ' + exam.duration + ' phút' +
+            '</span>' +
+            '<span class="exam-session-chip">' +
+              '<span aria-hidden="true">📝</span> ' + exam.questions.length + ' câu hỏi' +
+            '</span>' +
           '</div>' +
-          '<div id="optionsContainer">' + optionsHtml + '</div>' +
+          '<h1 class="exam-session-title">' + exam.title + '</h1>' +
+          '<p class="exam-session-desc">' + exam.description + '</p>' +
         '</div>' +
       '</div>' +
 
-      '<div class="answer-sheet" style="margin-bottom: var(--spacing-lg);">' +
-        '<div class="answer-sheet-head"><span>Điều hướng câu</span></div>' +
-        '<div class="question-dots" id="questionDots">' + renderQuestionDots() + '</div>' +
-      '</div>' +
-
-      '<div class="exam-nav">' +
-        '<button class="btn btn-outline" id="prevBtn"' + (currentQuestion === 0 ? ' disabled' : '') + '>← Câu trước</button>' +
-        '<button class="btn btn-primary" id="nextBtn">' +
-          (currentQuestion === exam.questions.length - 1 ? 'Xem lại' : 'Câu tiếp →') +
-        '</button>' +
+      '<div class="exam-layout">' +
+        '<div class="exam-main-col">' +
+          '<div class="exam-question-card" id="examQuestionCard"></div>' +
+          '<div class="exam-nav" id="examNav"></div>' +
+        '</div>' +
+        '<aside class="exam-sidebar">' +
+          '<div class="exam-sidebar-panel">' +
+            '<div class="exam-sidebar-head">' +
+              '<h3 class="exam-sidebar-title">Bản đồ câu hỏi</h3>' +
+              '<p class="exam-sidebar-sub">Nhấn vào số để chuyển câu</p>' +
+            '</div>' +
+            '<div class="exam-sidebar-stats" id="examSidebarStats"></div>' +
+            '<div class="question-dots exam-question-map" id="questionDots"></div>' +
+            '<div class="exam-sidebar-legend">' +
+              '<span class="legend-item"><i class="dot-legend current"></i> Đang làm</span>' +
+              '<span class="legend-item"><i class="dot-legend answered"></i> Đã trả lời</span>' +
+              '<span class="legend-item"><i class="dot-legend"></i> Chưa làm</span>' +
+            '</div>' +
+            '<button type="button" class="btn btn-outline btn-sm exam-sidebar-submit" id="sidebarSubmitBtn">Nộp bài thi</button>' +
+          '</div>' +
+        '</aside>' +
       '</div>';
+
+    var sidebarSubmit = document.getElementById('sidebarSubmitBtn');
+    if (sidebarSubmit) {
+      sidebarSubmit.addEventListener('click', showSubmitModal);
+    }
+
+    shellReady = true;
+  }
+
+  function renderQuestionContent() {
+    var q = exam.questions[currentQuestion];
+    var cardEl = document.getElementById('examQuestionCard');
+    var navEl = document.getElementById('examNav');
+    var dotsEl = document.getElementById('questionDots');
+
+    if (!cardEl || !navEl) return;
+
+    cardEl.innerHTML =
+      '<div class="exam-question-head">' +
+        '<span class="exam-question-badge">Câu ' + (currentQuestion + 1) + ' / ' + exam.questions.length + '</span>' +
+        (answers[currentQuestion] !== undefined
+          ? '<span class="exam-question-status answered">Đã chọn đáp án</span>'
+          : '<span class="exam-question-status">Chưa trả lời</span>') +
+      '</div>' +
+      '<h3 class="exam-question-text">' + q.question + '</h3>' +
+      '<div class="exam-options-wrap">' +
+        '<div class="answer-sheet-head">' +
+          '<span>Chọn một đáp án</span>' +
+          '<span>' + String.fromCharCode(65) + ' – ' + String.fromCharCode(64 + q.options.length) + '</span>' +
+        '</div>' +
+        '<div id="optionsContainer">' + renderOptionsHtml(q) + '</div>' +
+      '</div>';
+
+    navEl.innerHTML =
+      '<button type="button" class="btn btn-outline exam-nav-prev" id="prevBtn"' +
+        (currentQuestion === 0 ? ' disabled' : '') + '>' +
+        '<span aria-hidden="true">←</span> Câu trước' +
+      '</button>' +
+      '<span class="exam-nav-indicator">' + (currentQuestion + 1) + ' / ' + exam.questions.length + '</span>' +
+      '<button type="button" class="btn btn-primary exam-nav-next" id="nextBtn">' +
+        (currentQuestion === exam.questions.length - 1 ? 'Xem lại bài' : 'Câu tiếp') +
+        '<span aria-hidden="true">→</span>' +
+      '</button>';
+
+    if (dotsEl) {
+      dotsEl.innerHTML = renderQuestionDots();
+    }
 
     bindQuestionEvents();
     updateProgress();
 
-    var card = document.querySelector('.exam-question-card');
-    if (window.MathUpUI) window.MathUpUI.animateExamQuestion(card);
+    if (window.MathUpUI) window.MathUpUI.animateExamQuestion(cardEl);
+  }
+
+  function renderQuestion() {
+    if (!shellReady) initExamShell();
+    renderQuestionContent();
   }
 
   function bindQuestionEvents() {
@@ -162,7 +258,7 @@
       prevBtn.addEventListener('click', function () {
         if (currentQuestion > 0) {
           currentQuestion--;
-          renderQuestion();
+          renderQuestionContent();
         }
       });
     }
@@ -171,29 +267,30 @@
       nextBtn.addEventListener('click', function () {
         if (currentQuestion < exam.questions.length - 1) {
           currentQuestion++;
-          renderQuestion();
+          renderQuestionContent();
         }
       });
     }
 
-    document.querySelectorAll('.question-dot').forEach(function (dot) {
-      dot.addEventListener('click', function () {
-        currentQuestion = parseInt(dot.dataset.index, 10);
-        renderQuestion();
-      });
-    });
+    bindQuestionDotEvents();
   }
 
   function updateQuestionDots() {
     var dotsContainer = document.getElementById('questionDots');
     if (dotsContainer) {
       dotsContainer.innerHTML = renderQuestionDots();
-      document.querySelectorAll('.question-dot').forEach(function (dot) {
-        dot.addEventListener('click', function () {
-          currentQuestion = parseInt(dot.dataset.index, 10);
-          renderQuestion();
-        });
-      });
+      bindQuestionDotEvents();
+    }
+
+    var statusEl = document.querySelector('.exam-question-status');
+    if (statusEl) {
+      if (answers[currentQuestion] !== undefined) {
+        statusEl.textContent = 'Đã chọn đáp án';
+        statusEl.classList.add('answered');
+      } else {
+        statusEl.textContent = 'Chưa trả lời';
+        statusEl.classList.remove('answered');
+      }
     }
   }
 
@@ -277,6 +374,10 @@
     }
 
     document.title = exam.title + ' - MathUp VN';
+
+    var barTitle = document.getElementById('examBarTitle');
+    if (barTitle) barTitle.textContent = exam.title;
+
     startTime = Date.now();
     answers = {};
     sessionStorage.removeItem(getSessionKey('answers'));

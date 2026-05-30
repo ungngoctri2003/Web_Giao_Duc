@@ -19,6 +19,11 @@
     var grid = document.getElementById('examsGrid');
     if (!grid) return;
 
+    var countEl = document.getElementById('examCount');
+    if (countEl) {
+      countEl.textContent = EXAMS.length + ' đề thi';
+    }
+
     grid.innerHTML = EXAMS.map(function (exam, i) {
       var completed = isExamCompleted(exam.id);
       var lastScore = getLastScore(exam.id);
