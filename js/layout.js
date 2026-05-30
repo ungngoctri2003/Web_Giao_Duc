@@ -67,15 +67,44 @@
     return (
       '<footer class="site-footer">' +
         '<div class="container footer-inner">' +
-          '<div class="footer-main">' +
-            '<a href="' + base + 'index.html" class="logo logo-image footer-logo">' +
-              '<img src="' + base + 'assets/images/logo.png" alt="MathUp" class="logo-img footer-logo-img" width="140" height="48">' +
-            '</a>' +
-            '<nav class="footer-nav" aria-label="Điều hướng chân trang">' +
-              '<a href="' + base + 'index.html">Trang chủ</a>' +
-              '<a href="' + base + 'pages/lessons.html">Bài học</a>' +
-              '<a href="' + base + 'pages/exams.html">Bài thi</a>' +
-            '</nav>' +
+          '<div class="footer-grid">' +
+            '<div class="footer-brand">' +
+              '<a href="' + base + 'index.html" class="logo logo-image footer-logo">' +
+                '<img src="' + base + 'assets/images/logo.png" alt="MathUp" class="logo-img footer-logo-img" width="140" height="48">' +
+              '</a>' +
+              '<p class="footer-tagline">Học và luyện thi Toán trực tuyến — video bài giảng, ghi chú và bài thi có thời gian.</p>' +
+            '</div>' +
+            '<div class="footer-col">' +
+              '<h3 class="footer-col-title">Khám phá</h3>' +
+              '<nav class="footer-nav" aria-label="Điều hướng chân trang">' +
+                '<a href="' + base + 'index.html">Trang chủ</a>' +
+                '<a href="' + base + 'pages/lessons.html">Bài học</a>' +
+                '<a href="' + base + 'pages/exams.html">Bài thi</a>' +
+              '</nav>' +
+            '</div>' +
+            '<div class="footer-col">' +
+              '<h3 class="footer-col-title">Liên hệ</h3>' +
+              '<ul class="footer-contact-list">' +
+                '<li class="footer-contact-item">' +
+                  '<span class="footer-contact-icon" aria-hidden="true">' +
+                    '<svg width="15" height="15" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="5" r="3" stroke="currentColor" stroke-width="1.4"/><path d="M2.5 14c0-3 2.5-5 5.5-5s5.5 2 5.5 5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>' +
+                  '</span>' +
+                  '<span>Đặng Yến Nhi</span>' +
+                '</li>' +
+                '<li class="footer-contact-item">' +
+                  '<span class="footer-contact-icon" aria-hidden="true">' +
+                    '<svg width="15" height="15" viewBox="0 0 16 16" fill="none"><path d="M3.5 2.5h2.2l1 2.4-1.4 1.2a8.5 8.5 0 004.8 4.8l1.2-1.4 2.4 1v2.2a1.2 1.2 0 01-1.1 1.2C7.2 13.3 2.7 8.8 2.3 3.6a1.2 1.2 0 011.2-1.1z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/></svg>' +
+                  '</span>' +
+                  '<a href="tel:0944206289">0944206289</a>' +
+                '</li>' +
+                '<li class="footer-contact-item">' +
+                  '<span class="footer-contact-icon" aria-hidden="true">' +
+                    '<svg width="15" height="15" viewBox="0 0 16 16" fill="none"><rect x="1.5" y="3.5" width="13" height="9" rx="1.2" stroke="currentColor" stroke-width="1.3"/><path d="M1.5 4.5l6.5 4.5 6.5-4.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>' +
+                  '</span>' +
+                  '<a href="mailto:dangyennhi104@gmail.com">dangyennhi104@gmail.com</a>' +
+                '</li>' +
+              '</ul>' +
+            '</div>' +
           '</div>' +
           '<div class="footer-bottom">' +
             '<p class="footer-copy">© ' + year + ' MathUp VN · dự án học tập</p>' +
