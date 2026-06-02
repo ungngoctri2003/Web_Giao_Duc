@@ -8,7 +8,7 @@ const LESSONS = [
     duration: '25 phút',
     description: 'Tìm hiểu cách giải phương trình bậc nhất dạng ax + b = 0 và ứng dụng vào bài toán thực tế.',
     icon: '📐',
-    videoUrl: 'https://www.youtube.com/embed/_LmOwRrANCo',
+    videoUrl: 'https://www.youtube.com/embed/h5G2W0v9nkM',
     pdfUrl: '#',
     quiz: [
       {
@@ -40,7 +40,7 @@ const LESSONS = [
     duration: '35 phút',
     description: 'Công thức nghiệm, biệt thức Delta và các trường hợp phương trình bậc hai có nghiệm.',
     icon: '📊',
-    videoUrl: 'https://www.youtube.com/embed/IL9CUB2oa2E',
+    videoUrl: 'https://www.youtube.com/embed/KmgcEuv9VMA',
     pdfUrl: '#',
     quiz: [
       {
@@ -72,7 +72,7 @@ const LESSONS = [
     duration: '30 phút',
     description: 'Khám phá mối quan hệ giữa ba cạnh trong tam giác vuông và ứng dụng tính toán.',
     icon: '📏',
-    videoUrl: 'https://www.youtube.com/embed/WqUl2HGBNkw',
+    videoUrl: 'https://www.youtube.com/embed/FzEG52BEK8c?start=6',
     pdfUrl: '#',
     quiz: [
       {
@@ -104,7 +104,7 @@ const LESSONS = [
     duration: '40 phút',
     description: 'Khái niệm đạo hàm, quy tắc tính đạo hàm các hàm số cơ bản và ứng dụng.',
     icon: '📈',
-    videoUrl: 'https://www.youtube.com/embed/9vKqVkMQHKk',
+    videoUrl: 'https://www.youtube.com/embed/aZ0_g9gAcSE',
     pdfUrl: '#',
     quiz: [
       {
@@ -248,6 +248,19 @@ const TOPICS = [
   { id: 'hinh-hoc', label: 'Hình học' },
   { id: 'giai-tich', label: 'Giải tích' }
 ];
+
+function toYouTubeEmbedUrl(url) {
+  if (!url || typeof url !== 'string') return url;
+  if (/youtube\.com\/embed\//.test(url)) return url;
+
+  var idMatch = url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)([A-Za-z0-9_-]{11})/);
+  if (!idMatch) return url;
+
+  var embed = 'https://www.youtube.com/embed/' + idMatch[1];
+  var startMatch = url.match(/[?&]t=(\d+)/);
+  if (startMatch) embed += '?start=' + startMatch[1];
+  return embed;
+}
 
 function getLessonById(id) {
   return LESSONS.find(function (l) { return l.id === Number(id); });
